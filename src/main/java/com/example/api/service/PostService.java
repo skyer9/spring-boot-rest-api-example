@@ -40,7 +40,7 @@ public class PostService {
         Post e = get(dto.getIdx());
         updateMapper.updateFromDto(dto, e);
         e.setModifiedDate(LocalDateTime.now());
-        return responseMapper.toDto(postRepository.save(e));
+        return responseMapper.toDto(e);
     }
 
     @Transactional
@@ -61,7 +61,7 @@ public class PostService {
     public PostResponseDto select(Long idx) {
         Post e = get(idx);
         e.setViewCnt(e.getViewCnt() + 1);
-        return responseMapper.toDto(get(idx));
+        return responseMapper.toDto(e);
     }
 
     public List<PostResponseDto> search(SearchRequestDto dto) {
