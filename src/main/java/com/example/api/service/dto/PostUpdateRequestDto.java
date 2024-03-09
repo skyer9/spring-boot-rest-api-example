@@ -9,15 +9,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class PostUpdateRequestDto {
-    @Schema(description = "index", nullable = false)
+    @Schema(description = "index")
     private Long idx;
 
-    @Schema(description = "title", nullable = false, example = "title")
+    @Schema(description = "title", example = "title")
     private String title;
 
-    @Schema(description = "content", nullable = false, example = "content")
+    @Schema(description = "content", example = "content")
     private String content;
 
-    @Schema(description = "writer", nullable = false, example = "writer")
+    @Schema(description = "writer", example = "writer")
     private String writer;
 }

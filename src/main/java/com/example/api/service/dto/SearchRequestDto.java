@@ -13,6 +13,6 @@ public class SearchRequestDto {
     @Schema(description = "page size", nullable = true, example = "20")
     private Integer sz;
 
-    @Schema(description = "search string", nullable = true, example = "")
+    @Schema(description = "search string", nullable = true)
     private String s;
 }
