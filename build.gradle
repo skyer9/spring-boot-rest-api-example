@@ -42,9 +42,13 @@ dependencies {
     // H2
     implementation 'com.h2database:h2'
 
-    // swagger 3.x
+    // swagger 3.x (from springdoc)
     // http://localhost:8080/swagger-ui/index.html
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
+    // health check
+    // http://localhost:8080/actuator/health
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 tasks.named('test') {

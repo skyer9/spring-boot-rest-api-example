@@ -13,4 +13,16 @@ This is a example Java / Gradle / Spring Boot (version 3.x) application that can
 - lombok
 - Swagger 3.x
 
-## 111
+## Swagger UI 3.x
+
+http://localhost:8080/swagger-ui/index.html
+
+## health check
+
+http://localhost:8080/actuator/health
+
+## Database
+
+### MariaDB
+### Oracle
+
