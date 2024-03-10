@@ -11,6 +11,9 @@ This is a example Java / Gradle / Spring Boot (version 3.x) application that can
 - QueryDSL 5.0.0
 - lombok
 - Swagger 3.x
+- ResponseEntity
+- RestControllerAdvice
+- health check
 
 ## Swagger UI 3.x
 
