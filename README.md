@@ -27,10 +27,23 @@ http://localhost:8080/actuator/health
 ## Spring Boot Security with JWT
 
 ```bash
+POST http://localhost:8080/api/createAdminUser
+{
+  "username": "skyer9",
+  "password": "abcd1234",
+  "nickname": "skyer9"
+}
+
+# POST http://localhost:8080/api/signin
+# {
+#   "username": "admin",
+#   "password": "admin"
+# }
+
 POST http://localhost:8080/api/signin
 {
-  "username": "admin",
-  "password": "admin"
+  "username": "skyer9",
+  "password": "abcd1234"
 }
 
 POST http://localhost:8080/api/signup
