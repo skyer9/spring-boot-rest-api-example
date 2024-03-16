@@ -17,6 +17,13 @@ import org.springframework.web.bind.annotation.*;
 public class MyUserController {
     private final MyUserService myUserService;
 
+    @PostMapping("/createAdminUser")
+    public ResponseEntity<MyUser> createAdminUser(
+            @Valid @RequestBody MyUserDto userDto
+    ) {
+        return ResponseEntity.ok(myUserService.createAdminUser(userDto));
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<MyUser> signup(
             @Valid @RequestBody MyUserDto userDto

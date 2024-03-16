@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -39,6 +41,27 @@ public class MyUserService {
     public TokenDto reissue(RefreshToken refreshToken) {
         MyUser myUser = getUserWithAuthorities(refreshToken.getUsername());
         return jwtTokenProvider.reissueToken(myUser, refreshToken);
+    }
+
+    @Transactional
+    public MyUser createAdminUser(MyUserDto myUserDto) {
+        if (myUserRepository.count() > 0) {
+            throw new RuntimeException("User account must be zero");
+        }
+
+        Set<Authority> authorities = new HashSet<>();
+        authorities.add(Authority.builder().authorityName("ADMIN").build());
+        authorities.add(Authority.builder().authorityName("USER").build());
+
+        MyUser myUser = MyUser.builder()
+                .username(myUserDto.getUsername())
+                .password(passwordEncoder.encode(myUserDto.getPassword()))
+                .nickname(myUserDto.getNickname())
+                .authorities(authorities)
+                .activated(true)
+                .build();
+
+        return myUserRepository.save(myUser);
     }
 
     @Transactional
