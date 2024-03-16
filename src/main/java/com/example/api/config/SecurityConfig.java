@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
                                 .requestMatchers(PathRequest.toH2Console()).permitAll()
+                                .requestMatchers("/api/createAdminUser").permitAll()
                                 .requestMatchers("/api/signin").permitAll()
                                 .requestMatchers("/api/signup").permitAll()
                                 .requestMatchers("/api/reissue").permitAll()
