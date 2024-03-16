@@ -12,4 +12,9 @@ public class RestExceptionHandler {
     public ResponseEntity<?> handleRuntimeException(RuntimeException e) {
         return ResponseEntity.ok(ResponseDto.res(HttpStatus.BAD_REQUEST, e.getMessage()));
     }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException e) {
+        return ResponseEntity.ok(ResponseDto.res(HttpStatus.BAD_REQUEST, e.getMessage()));
+    }
 }

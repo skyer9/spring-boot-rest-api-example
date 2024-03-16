@@ -14,6 +14,7 @@ This is a example Java / Gradle / Spring Boot (version 3.x) application that can
 - ResponseEntity
 - RestControllerAdvice
 - health check
+- Spring Boot Security with JWT
 
 ## Swagger UI 3.x
 
@@ -22,6 +23,34 @@ http://localhost:8080/swagger-ui/index.html
 ## health check
 
 http://localhost:8080/actuator/health
+
+## Spring Boot Security with JWT
+
+```bash
+POST http://localhost:8080/api/signin
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+POST http://localhost:8080/api/signup
+{
+  "username": "skyer9",
+  "password": "abcd1234",
+  "nickname": "skyer9"
+}
+
+POST http://localhost:8080/api/reissue
+{
+  "token": "refreshToken"
+}
+
+GET http://localhost:8080/api/user
+Bearer accessToken
+
+GET http://localhost:8080/api/user/{username}
+Bearer accessToken
+```
 
 ## Database
 
