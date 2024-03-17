@@ -18,7 +18,6 @@ spring:
     defer-datasource-initialization: true
 
 jwt:
-  # header: Authorization
   secret: a2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ==
   access-token-validity-in-milliseconds: 1800000
   refresh-token-validity-in-milliseconds: 86400000
