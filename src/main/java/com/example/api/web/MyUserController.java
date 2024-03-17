@@ -3,6 +3,7 @@ package com.example.api.web;
 import com.example.api.domain.MyUser;
 import com.example.api.service.MyUserService;
 import com.example.api.service.dto.MyUserDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Tag(name = "User", description = "User API")
 public class MyUserController {
     private final MyUserService myUserService;
 
