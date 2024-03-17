@@ -7,6 +7,7 @@ import com.example.api.service.RefreshTokenService;
 import com.example.api.service.dto.LoginDto;
 import com.example.api.service.dto.RefreshTokenRequestDTO;
 import com.example.api.service.dto.TokenDto;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,11 +27,11 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/signin")
-    public ResponseEntity<TokenDto> signin(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<TokenDto> signin(HttpServletRequest request, @RequestBody LoginDto loginDto) {
         String username = loginDto.getUsername();
         String password = loginDto.getPassword();
 
-        TokenDto tokenDto = myUserService.login(username, password);
+        TokenDto tokenDto = myUserService.login(request, username, password);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtTokenProvider.AUTHORIZATION_HEADER, "Bearer " + tokenDto.getAccessToken());
 

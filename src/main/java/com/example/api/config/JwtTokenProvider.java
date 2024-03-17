@@ -8,6 +8,7 @@ import com.example.api.service.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -42,6 +43,7 @@ public class JwtTokenProvider implements InitializingBean {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
+    @Transactional
     public TokenDto generateToken(MyUser myUser) {
         String authorities = myUser
                 .getAuthorities()
@@ -129,22 +131,26 @@ public class JwtTokenProvider implements InitializingBean {
                 .setSubject(username)
                 .claim(AUTHORITIES_KEY, authorities)
                 .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
     private String generateRefreshToken(String username, long now) {
         String refreshToken = Jwts.builder()
+                .setSubject(username)
                 .setExpiration(new Date(now + refreshTokenValidityInMilliseconds))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
-        refreshTokenRepository.save(RefreshToken
-                .builder()
-                .token(refreshToken)
-                .expiryDate(now + refreshTokenValidityInMilliseconds)
-                .username(username)
-                .build());
+        Optional<RefreshToken> saved = refreshTokenRepository.findByToken(refreshToken);
+        if (saved.isEmpty()) {
+            refreshTokenRepository.save(RefreshToken
+                    .builder()
+                    .token(refreshToken)
+                    .expiryDate(now + refreshTokenValidityInMilliseconds)
+                    .username(username)
+                    .build());
+        }
 
         return refreshToken;
     }

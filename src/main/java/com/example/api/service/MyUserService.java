@@ -1,39 +1,41 @@
 package com.example.api.service;
 
+import com.example.api.common.Helper;
 import com.example.api.common.SecurityUtil;
 import com.example.api.config.JwtTokenProvider;
-import com.example.api.domain.Authority;
-import com.example.api.domain.MyUser;
-import com.example.api.domain.MyUserRepository;
-import com.example.api.domain.RefreshToken;
+import com.example.api.domain.*;
 import com.example.api.service.dto.MyUserDto;
 import com.example.api.service.dto.TokenDto;
 import com.example.api.web.advice.UserNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MyUserService {
     private final MyUserRepository myUserRepository;
+    private final LoginLogService loginLogService;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional
-    public TokenDto login(String username, String password) {
-        MyUser myUser = getUserWithAuthorities(username);
-        if (!passwordEncoder.matches(password, myUser.getPassword())) {
-            throw new RuntimeException("username or password is incorrect");
+    @Transactional(noRollbackFor = UserNotFoundException.class)
+    public TokenDto login(HttpServletRequest request, String username, String password) {
+        if (loginLogService.isBlocked(username)) {
+            throw new RuntimeException("Too many login fail, wait please");
         }
 
+        MyUser myUser = getUserWithAuthorities(username);
+        if (!passwordEncoder.matches(password, myUser.getPassword())) {
+            loginLogService.loginFailed(username, Helper.getClientIpAddress(request));
+            throw new UserNotFoundException("username or password is incorrect");
+        }
+
+        loginLogService.loginSucceeded(username, Helper.getClientIpAddress(request));
         return jwtTokenProvider.generateToken(myUser);
     }
 
