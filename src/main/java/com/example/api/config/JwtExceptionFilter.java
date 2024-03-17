@@ -1,7 +1,6 @@
 package com.example.api.config;
 
-import com.example.api.common.ResponseDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.api.common.SecurityUtil;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,8 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,14 +23,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         try {
             chain.doFilter(request, response);
         } catch (JwtException ex) {
-            setResponse(response, ex);
+            SecurityUtil.setResponse(response, ex);
         }
-    }
-
-    private void setResponse(HttpServletResponse response, Exception ex) throws RuntimeException, IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().print(mapper.writeValueAsString(ResponseDto.res(HttpStatus.BAD_REQUEST, ex.getMessage())));
     }
 }

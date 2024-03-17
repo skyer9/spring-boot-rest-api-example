@@ -46,8 +46,8 @@ public class SecurityConfig {
                 )
                 .exceptionHandling((exceptionConfig) ->
                         exceptionConfig
-                                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                                .accessDeniedHandler(jwtAccessDeniedHandler)
+                                .authenticationEntryPoint(jwtAuthenticationEntryPoint) // handle 401 Error
+                                .accessDeniedHandler(jwtAccessDeniedHandler)           // handle 403 Error
                 )
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
