@@ -7,6 +7,7 @@ import com.example.api.service.RefreshTokenService;
 import com.example.api.service.dto.LoginDto;
 import com.example.api.service.dto.RefreshTokenRequestDTO;
 import com.example.api.service.dto.TokenDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "Auth API")
 public class AuthController {
     private final MyUserService myUserService;
     private final RefreshTokenService refreshTokenService;
