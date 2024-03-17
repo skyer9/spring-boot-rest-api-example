@@ -1,6 +1,5 @@
 package com.example.api.service;
 
-import com.example.api.common.Helper;
 import com.example.api.common.SecurityUtil;
 import com.example.api.config.JwtTokenProvider;
 import com.example.api.domain.*;
@@ -31,11 +30,11 @@ public class MyUserService {
 
         MyUser myUser = getUserWithAuthorities(username);
         if (!passwordEncoder.matches(password, myUser.getPassword())) {
-            loginLogService.loginFailed(username, Helper.getClientIpAddress(request));
+            loginLogService.loginFailed(username, SecurityUtil.getClientIpAddress(request));
             throw new UserNotFoundException("username or password is incorrect");
         }
 
-        loginLogService.loginSucceeded(username, Helper.getClientIpAddress(request));
+        loginLogService.loginSucceeded(username, SecurityUtil.getClientIpAddress(request));
         return jwtTokenProvider.generateToken(myUser);
     }
 
