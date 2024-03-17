@@ -38,6 +38,8 @@ public class SecurityConfig {
                                 .requestMatchers("/api/signup").permitAll()
                                 .requestMatchers("/api/reissue").permitAll()
                                 .requestMatchers("/favicon.ico").permitAll()
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/api/user").hasAnyRole("ADMIN", "USER")
                                 .requestMatchers("/api/user/**").hasRole("ADMIN")
 
