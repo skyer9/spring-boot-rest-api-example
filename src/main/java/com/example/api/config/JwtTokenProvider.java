@@ -45,13 +45,8 @@ public class JwtTokenProvider implements InitializingBean {
 
     @Transactional
     public TokenDto generateToken(MyUser myUser) {
-        String authorities = myUser
-                .getAuthorities()
-                .stream()
-                .map(Authority::addPrefix)
-                .collect(Collectors.joining(","));
-
         long now = (new Date()).getTime();
+        String authorities = getAuthorities(myUser);
         String accessToken = generateAccessToken(myUser.getUsername(), authorities, now);
         String refreshToken = generateRefreshToken(myUser.getUsername(), now);
 
@@ -63,17 +58,10 @@ public class JwtTokenProvider implements InitializingBean {
     }
 
     public TokenDto reissueToken(MyUser myUser, RefreshToken refreshToken) {
-        if (!validateToken(refreshToken.getToken())) {
-            return null;
-        }
-
-        String authorities = myUser
-                .getAuthorities()
-                .stream()
-                .map(Authority::addPrefix)
-                .collect(Collectors.joining(","));
+        validateToken(refreshToken.getToken());
 
         long now = (new Date()).getTime();
+        String authorities = getAuthorities(myUser);
         String accessToken = generateAccessToken(refreshToken.getUsername(), authorities, now);
 
         return TokenDto.builder()
@@ -124,7 +112,6 @@ public class JwtTokenProvider implements InitializingBean {
         }
     }
 
-
     private String generateAccessToken(String username, String authorities, long now) {
         Date accessTokenExpiresIn = new Date(now + accessTokenValidityInMilliseconds);
         return Jwts.builder()
@@ -155,6 +142,13 @@ public class JwtTokenProvider implements InitializingBean {
         return refreshToken;
     }
 
+    private String getAuthorities(MyUser myUser) {
+        return myUser
+                .getAuthorities()
+                .stream()
+                .map(Authority::addPrefix)
+                .collect(Collectors.joining(","));
+    }
 
     @Override
     public void afterPropertiesSet() {
