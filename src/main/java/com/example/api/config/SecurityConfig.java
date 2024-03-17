@@ -42,8 +42,6 @@ public class SecurityConfig {
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/api/user").hasAnyRole("ADMIN", "USER")
                                 .requestMatchers("/api/user/**").hasRole("ADMIN")
-
-
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling((exceptionConfig) ->
@@ -53,7 +51,7 @@ public class SecurityConfig {
                 )
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter,JwtAuthenticationFilter.class);
+                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
         return http.build();
     }
 
