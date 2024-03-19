@@ -14,7 +14,7 @@ This is a example Java / Gradle / Spring Boot (version 3.x) application that can
 - ResponseEntity
 - RestControllerAdvice
 - health check
-- Spring Boot Security with JWT
+- Spring Boot Security with Session and cookie
 
 ## Swagger UI 3.x
 
@@ -53,16 +53,11 @@ POST http://localhost:8080/api/signup
   "nickname": "skyer9"
 }
 
-POST http://localhost:8080/api/reissue
-{
-  "token": "refreshToken"
-}
-
 GET http://localhost:8080/api/user
-Bearer accessToken
 
 GET http://localhost:8080/api/user/{username}
-Bearer accessToken
+
+POST http://localhost:8080/api/signout
 ```
 
 ## Database
