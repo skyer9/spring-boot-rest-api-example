@@ -1,6 +1,5 @@
 package com.example.api.config;
 
-import com.example.api.domain.MyUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +21,6 @@ public class SecurityConfig {
     private final SessionAccessDeniedHandler sessionAccessDeniedHandler;
     private final SessionManager sessionManager;
     private final SessionAuthenticationProvider sessionAuthenticationProvider;
-    private final MyUserRepository myUserRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -50,7 +48,7 @@ public class SecurityConfig {
                                 .authenticationEntryPoint(sessionAuthenticationEntryPoint) // handle 401 Error
                                 .accessDeniedHandler(sessionAccessDeniedHandler)           // handle 403 Error
                 )
-                .addFilterBefore(new SessionAuthenticationFilter(sessionManager, sessionAuthenticationProvider, myUserRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new SessionAuthenticationFilter(sessionManager, sessionAuthenticationProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
