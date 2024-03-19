@@ -17,7 +17,10 @@ spring:
         show_sql: ture
     defer-datasource-initialization: true
 
-jwt:
-  secret: a2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ==
-  access-token-validity-in-milliseconds: 1800000
-  refresh-token-validity-in-milliseconds: 86400000
+server:
+  ssl:
+    enabled: true
+    key-store: key.pkcs12
+    key-store-password:      # 비밀번호를 입력한 경우
+    key-store-type: PKCS12
+    key-alias: System        # Name 에 입력한 것

@@ -1,5 +1,6 @@
 package com.example.api.config;
 
+import com.example.api.domain.MyUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,10 +18,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final JwtTokenProvider jwtTokenProvider;
-    private final JwtExceptionFilter jwtExceptionFilter;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final SessionAuthenticationEntryPoint sessionAuthenticationEntryPoint;
+    private final SessionAccessDeniedHandler sessionAccessDeniedHandler;
+    private final SessionManager sessionManager;
+    private final SessionAuthenticationProvider sessionAuthenticationProvider;
+    private final MyUserRepository myUserRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -46,12 +47,10 @@ public class SecurityConfig {
                 )
                 .exceptionHandling((exceptionConfig) ->
                         exceptionConfig
-                                .authenticationEntryPoint(jwtAuthenticationEntryPoint) // handle 401 Error
-                                .accessDeniedHandler(jwtAccessDeniedHandler)           // handle 403 Error
+                                .authenticationEntryPoint(sessionAuthenticationEntryPoint) // handle 401 Error
+                                .accessDeniedHandler(sessionAccessDeniedHandler)           // handle 403 Error
                 )
-                .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
+                .addFilterBefore(new SessionAuthenticationFilter(sessionManager, sessionAuthenticationProvider, myUserRepository), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
