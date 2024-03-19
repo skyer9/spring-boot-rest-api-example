@@ -1,6 +1,7 @@
 package com.example.api.config;
 
 import com.example.api.common.SecurityUtil;
+import com.example.api.web.advice.LoginInfomationNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
@@ -15,6 +16,6 @@ public class SessionAuthenticationEntryPoint implements AuthenticationEntryPoint
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        SecurityUtil.setResponse(response, authException);
+        SecurityUtil.setResponse(response, new LoginInfomationNotFoundException("Login infomation not found"));
     }
 }
