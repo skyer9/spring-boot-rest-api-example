@@ -19,7 +19,7 @@ spring:
   data:
     redis:
       cluster:
-        nodes: 127.0.01:6379
+        nodes: 127.0.0.1:6379
 
 server:
   ssl:

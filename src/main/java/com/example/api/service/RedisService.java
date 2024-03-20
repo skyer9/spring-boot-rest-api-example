@@ -16,7 +16,7 @@ public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper mapper;
 
-    public void putSession(String key, Object value, Long expiredTime) {
+    public void putData(String key, Object value, Long expiredTime) {
         try {
             String jsonString = mapper.writeValueAsString(value);
             redisTemplate.opsForValue().set(key, jsonString, expiredTime, TimeUnit.MILLISECONDS);
@@ -26,7 +26,7 @@ public class RedisService {
 
     }
 
-    public <T> Optional<T> getSession(String key, Class<T> valueType) {
+    public <T> Optional<T> getData(String key, Class<T> valueType) {
         try {
             String jsonString = (String) redisTemplate.opsForValue().get(key);
             if (StringUtils.hasText(jsonString)) {

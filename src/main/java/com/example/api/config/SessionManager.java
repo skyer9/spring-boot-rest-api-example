@@ -30,7 +30,7 @@ public class SessionManager {
     public void createSession(HttpServletResponse response, MyUser myUser) {
         String sessionId = UUID.randomUUID().toString();
         int maxAge = 15 * 60;
-        redisService.putSession(sessionId, myUser, (long) (maxAge * 1000));    // 15 minutes
+        redisService.putData(sessionId, myUser, (long) (maxAge * 1000));    // 15 minutes
         CookieUtil.setCookie(response, SESSION_COOKIE_NAME, sessionId, maxAge);
     }
 
@@ -39,7 +39,7 @@ public class SessionManager {
         if (cookie == null) {
             return null;
         }
-        Optional<MyUser> o = redisService.getSession(cookie.getValue(), MyUser.class);
+        Optional<MyUser> o = redisService.getData(cookie.getValue(), MyUser.class);
         return o.orElse(null);
     }
 
