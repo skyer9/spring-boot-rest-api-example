@@ -6,9 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -17,25 +15,22 @@ public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper mapper;
 
-    public void put(String key, Object value, Long expiredTime) {
+    public void putSession(String key, MyUser value, Long expiredTime) {
         try {
-            redisTemplate.opsForValue().set(key, mapper.writeValueAsString(value), expiredTime, TimeUnit.MILLISECONDS);
+            String jsonString = mapper.writeValueAsString(value);
+            redisTemplate.opsForValue().set(key, jsonString, expiredTime, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
-            System.out.println(e);
+            throw new RuntimeException(e);
         }
 
     }
 
-    public <T> Optional<T> get(String key, Class<T> classType) {
-        String jsonData = (String) redisTemplate.opsForValue().get(key);
-
+    public MyUser getSession(String key) {
         try {
-            if (StringUtils.hasText(jsonData)) {
-                return Optional.ofNullable(mapper.readValue(jsonData, classType));
-            }
-            return Optional.empty();
+            String jsonString = (String) redisTemplate.opsForValue().get(key);
+            return mapper.readValue(jsonString, MyUser.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 

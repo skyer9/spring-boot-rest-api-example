@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -18,24 +19,14 @@ import java.util.UUID;
 public class SessionManager {
     public static final String SESSION_COOKIE_NAME = "MY_SESS";
     public static final String LOGIN_COOKIE_NAME = "MY_AUTH";
-    // private final RedisService sessionStore;
+    private final RedisService redisService;
     private final LoginCookieRepository loginCookieRepository;
     private final MyUserRepository myUserRepository;
-    private final RedisSessionRepository redisSessionRepository;
 
     public void createSession(Object value, HttpServletResponse response) {
         String sessionId = UUID.randomUUID().toString();
-        redisSessionRepository.save(RedisSession
-                .builder()
-                        .key(sessionId)
-                        .value((MyUser) value)
-                        .timeToLive((long) (15 * 60 * 1000))    // 15 minutes
-                .build());
-        // sessionStore.put(sessionId, value, (long) (15 * 60 * 1000));    // 15 minutes
-
+        redisService.putSession(sessionId, (MyUser) value, (long) (15 * 60 * 1000));    // 15 minutes
         Cookie cookie = new Cookie(SESSION_COOKIE_NAME, sessionId);
-        System.out.println("1111111111111");
-        System.out.println(sessionId);
         response.addCookie(cookie);
     }
 
@@ -44,22 +35,20 @@ public class SessionManager {
         if (cookie == null) {
             return null;
         }
-        System.out.println("1111111111111 222");
-        System.out.println(cookie.getValue());
-        Optional<RedisSession> redisSession = redisSessionRepository.findById(cookie.getValue());
-        return redisSession.orElse(null);
+        return redisService.getSession(cookie.getValue());
     }
 
+    @Transactional
     public void expire(HttpServletRequest request) {
         Cookie sessionCookie = findCookie(request, SESSION_COOKIE_NAME);
         if (sessionCookie != null) {
-            // sessionStore.remove(sessionCookie.getValue());
-            redisSessionRepository.deleteById(sessionCookie.getValue());
+            redisService.remove(sessionCookie.getValue());
             sessionCookie.setMaxAge(-1);
         }
         Cookie loginCookie = findCookie(request, LOGIN_COOKIE_NAME);
         if (loginCookie != null) {
-            // loginCookieRepository.deleteById(loginCookie.getValue());
+            Optional<LoginCookie> entity = loginCookieRepository.findTop1ByCookieOrderByIdDesc(loginCookie.getValue());
+            entity.ifPresent(cookie -> loginCookieRepository.deleteById(cookie.getId()));
             loginCookie.setMaxAge(-1);
         }
     }
