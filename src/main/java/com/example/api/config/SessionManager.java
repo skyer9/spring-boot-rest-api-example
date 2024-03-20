@@ -97,7 +97,7 @@ public class SessionManager {
             return null;
         }
 
-        createSession(myUser, response);
+        createSession(myUser.get(), response);
 
         return myUser.get();
     }
