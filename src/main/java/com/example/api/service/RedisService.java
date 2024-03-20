@@ -19,9 +19,6 @@ public class RedisService {
     public void putSession(String key, Object value, Long expiredTime) {
         try {
             String jsonString = mapper.writeValueAsString(value);
-            System.out.println("111111111111111");
-            System.out.println(key);
-            System.out.println(jsonString);
             redisTemplate.opsForValue().set(key, jsonString, expiredTime, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -32,9 +29,6 @@ public class RedisService {
     public <T> Optional<T> getSession(String key, Class<T> valueType) {
         try {
             String jsonString = (String) redisTemplate.opsForValue().get(key);
-            System.out.println("2222222222");
-            System.out.println(key);
-            System.out.println(jsonString);
             if (StringUtils.hasText(jsonString)) {
                 return Optional.ofNullable(mapper.readValue(jsonString, valueType));
             }

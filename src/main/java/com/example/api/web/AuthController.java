@@ -30,7 +30,7 @@ public class AuthController {
         String password = loginDto.getPassword();
 
         MyUser myUser = myUserService.login(request, username, password);
-        sessionManager.createSession(myUser, response);
+        sessionManager.createSession(response, myUser);
         sessionManager.createLoginCookie(myUser, response);
         return ResponseEntity.ok(ResponseDto.res(HttpStatus.ACCEPTED, "OK"));
     }

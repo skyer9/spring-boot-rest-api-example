@@ -27,14 +27,14 @@ public class SessionManager {
     private final MyUserRepository myUserRepository;
 
     @Transactional
-    public void createSession(Object value, HttpServletResponse response) {
+    public void createSession(HttpServletResponse response, MyUser myUser) {
         String sessionId = UUID.randomUUID().toString();
         int maxAge = 15 * 60;
-        redisService.putSession(sessionId, value, (long) (maxAge * 1000));    // 15 minutes
+        redisService.putSession(sessionId, myUser, (long) (maxAge * 1000));    // 15 minutes
         CookieUtil.setCookie(response, SESSION_COOKIE_NAME, sessionId, maxAge);
     }
 
-    public Object getSession(HttpServletRequest request) {
+    public MyUser getSession(HttpServletRequest request) {
         Cookie cookie = CookieUtil.getCookie(request, SESSION_COOKIE_NAME);
         if (cookie == null) {
             return null;
@@ -81,7 +81,7 @@ public class SessionManager {
     }
 
     @Transactional
-    public Object getSessionByCookie(HttpServletRequest request, HttpServletResponse response) {
+    public MyUser getSessionByCookie(HttpServletRequest request, HttpServletResponse response) {
         Cookie cookie = CookieUtil.getCookie(request, LOGIN_COOKIE_NAME);
         if (cookie == null) {
             return null;
@@ -97,10 +97,8 @@ public class SessionManager {
             return null;
         }
 
-        createSession(myUser.get(), response);
+        createSession(response, myUser.get());
 
         return myUser.get();
     }
-
-
 }
