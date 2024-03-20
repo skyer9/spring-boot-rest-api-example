@@ -36,8 +36,9 @@ public class AuthController {
     }
 
     @PostMapping("/signout")
-    public ResponseEntity<?> signout(HttpServletRequest request) {
-        sessionManager.expire(request);
+    public ResponseEntity<?> signout(HttpServletRequest request, HttpServletResponse response) {
+        sessionManager.deleteSession(request, response);
+        sessionManager.deleteLoginCookie(request, response);
         return ResponseEntity.ok(ResponseDto.res(HttpStatus.ACCEPTED, "OK"));
     }
 }
