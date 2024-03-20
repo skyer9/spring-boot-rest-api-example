@@ -16,6 +16,10 @@ spring:
         format_sql: true
         show_sql: ture
     defer-datasource-initialization: true
+  data:
+    redis:
+      cluster:
+        nodes: 127.0.01:6379
 
 server:
   ssl:

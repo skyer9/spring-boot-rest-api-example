@@ -1,32 +1,41 @@
 package com.example.api.config;
 
-import com.example.api.domain.LoginCookie;
-import com.example.api.domain.LoginCookieRepository;
-import com.example.api.domain.MyUser;
-import com.example.api.domain.MyUserRepository;
+import com.example.api.domain.*;
+import com.example.api.service.RedisService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class SessionManager {
     public static final String SESSION_COOKIE_NAME = "MY_SESS";
     public static final String LOGIN_COOKIE_NAME = "MY_AUTH";
-    private final Map<String, Object> sessionStore = new ConcurrentHashMap<>();
+    // private final RedisService sessionStore;
     private final LoginCookieRepository loginCookieRepository;
     private final MyUserRepository myUserRepository;
+    private final RedisSessionRepository redisSessionRepository;
 
     public void createSession(Object value, HttpServletResponse response) {
         String sessionId = UUID.randomUUID().toString();
-        sessionStore.put(sessionId, value);
+        redisSessionRepository.save(RedisSession
+                .builder()
+                        .key(sessionId)
+                        .value((MyUser) value)
+                        .timeToLive((long) (15 * 60 * 1000))    // 15 minutes
+                .build());
+        // sessionStore.put(sessionId, value, (long) (15 * 60 * 1000));    // 15 minutes
 
         Cookie cookie = new Cookie(SESSION_COOKIE_NAME, sessionId);
+        System.out.println("1111111111111");
+        System.out.println(sessionId);
         response.addCookie(cookie);
     }
 
@@ -35,17 +44,22 @@ public class SessionManager {
         if (cookie == null) {
             return null;
         }
-        return sessionStore.get(cookie.getValue());
+        System.out.println("1111111111111 222");
+        System.out.println(cookie.getValue());
+        Optional<RedisSession> redisSession = redisSessionRepository.findById(cookie.getValue());
+        return redisSession.orElse(null);
     }
 
     public void expire(HttpServletRequest request) {
         Cookie sessionCookie = findCookie(request, SESSION_COOKIE_NAME);
         if (sessionCookie != null) {
-            sessionStore.remove(sessionCookie.getValue());
+            // sessionStore.remove(sessionCookie.getValue());
+            redisSessionRepository.deleteById(sessionCookie.getValue());
             sessionCookie.setMaxAge(-1);
         }
         Cookie loginCookie = findCookie(request, LOGIN_COOKIE_NAME);
         if (loginCookie != null) {
+            // loginCookieRepository.deleteById(loginCookie.getValue());
             loginCookie.setMaxAge(-1);
         }
     }
