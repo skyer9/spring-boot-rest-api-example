@@ -12,10 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -49,14 +47,7 @@ public class MyUserService {
         Set<Authority> authorities = new HashSet<>();
         authorities.add(Authority.builder().authorityName("ADMIN").build());
         authorities.add(Authority.builder().authorityName("USER").build());
-
-        MyUser myUser = MyUser.builder()
-                .username(myUserDto.getUsername())
-                .password(passwordEncoder.encode(myUserDto.getPassword()))
-                .nickname(myUserDto.getNickname())
-                .authorities(authorities)
-                .activated(true)
-                .build();
+        MyUser myUser = createUserEntity(myUserDto, authorities);
 
         return myUserRepository.save(myUser);
     }
@@ -67,17 +58,9 @@ public class MyUserService {
             throw new RuntimeException("Unavailable username");
         }
 
-        Authority authority = Authority.builder()
-                .authorityName("USER")
-                .build();
-
-        MyUser myUser = MyUser.builder()
-                .username(myUserDto.getUsername())
-                .password(passwordEncoder.encode(myUserDto.getPassword()))
-                .nickname(myUserDto.getNickname())
-                .authorities(Collections.singleton(authority))
-                .activated(true)
-                .build();
+        Set<Authority> authorities = new HashSet<>();
+        authorities.add(Authority.builder().authorityName("USER").build());
+        MyUser myUser = createUserEntity(myUserDto, authorities);
 
         return myUserRepository.save(myUser);
     }
@@ -93,7 +76,7 @@ public class MyUserService {
     }
 
     @Transactional(readOnly = true)
-    public MyUser getMyUserWithAuthorities() {
+    public MyUser getUserWithAuthoritiesFromSession() {
         Optional<MyUser> myUser = SecurityUtil
                 .getCurrentUsername()
                 .flatMap(myUserRepository::findOneWithAuthoritiesByUsername);
@@ -102,5 +85,17 @@ public class MyUserService {
         }
 
         return myUser.get();
+    }
+
+    private MyUser createUserEntity(MyUserDto myUserDto, Set<Authority> authorities) {
+        SimpleDateFormat now = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        return MyUser.builder()
+                .username(myUserDto.getUsername())
+                .password(passwordEncoder.encode(myUserDto.getPassword()))
+                .nickname(myUserDto.getNickname())
+                .lastLoginDate(now.format(new Date()))
+                .authorities(authorities)
+                .activated(true)
+                .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.api.web;
 
 import com.example.api.common.ResponseDto;
+import com.example.api.config.CookieManager;
 import com.example.api.config.SessionManager;
 import com.example.api.domain.MyUser;
 import com.example.api.service.MyUserService;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final MyUserService myUserService;
     private final SessionManager sessionManager;
+    private final CookieManager cookieManager;
 
     @PostMapping("/signin")
     public ResponseEntity<?> signin(HttpServletRequest request, HttpServletResponse response, @RequestBody LoginDto loginDto) {
@@ -30,15 +32,19 @@ public class AuthController {
         String password = loginDto.getPassword();
 
         MyUser myUser = myUserService.login(request, username, password);
+        sessionManager.deleteSession(request, response);
+        cookieManager.deleteLoginCookie(request, response);
         sessionManager.createSession(response, myUser);
-        sessionManager.createLoginCookie(myUser, response);
+        cookieManager.createLoginCookie(myUser, response);
+
         return ResponseEntity.ok(ResponseDto.res(HttpStatus.ACCEPTED, "OK"));
     }
 
     @PostMapping("/signout")
     public ResponseEntity<?> signout(HttpServletRequest request, HttpServletResponse response) {
         sessionManager.deleteSession(request, response);
-        sessionManager.deleteLoginCookie(request, response);
+        cookieManager.deleteLoginCookie(request, response);
+
         return ResponseEntity.ok(ResponseDto.res(HttpStatus.ACCEPTED, "OK"));
     }
 }

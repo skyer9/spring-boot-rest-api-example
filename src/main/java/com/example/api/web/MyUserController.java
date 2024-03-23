@@ -36,7 +36,7 @@ public class MyUserController {
     @GetMapping("/user")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<MyUser> getMyUserInfo() {
-        return ResponseEntity.ok(myUserService.getMyUserWithAuthorities());
+        return ResponseEntity.ok(myUserService.getUserWithAuthoritiesFromSession());
     }
 
     @GetMapping("/user/{username}")

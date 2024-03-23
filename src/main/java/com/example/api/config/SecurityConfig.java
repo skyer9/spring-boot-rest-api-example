@@ -17,9 +17,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final SessionAuthenticationEntryPoint sessionAuthenticationEntryPoint;
-    private final SessionAccessDeniedHandler sessionAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final SessionManager sessionManager;
+    private final CookieManager cookieManager;
     private final SessionAuthenticationProvider sessionAuthenticationProvider;
 
     @Bean
@@ -45,10 +46,11 @@ public class SecurityConfig {
                 )
                 .exceptionHandling((exceptionConfig) ->
                         exceptionConfig
-                                .authenticationEntryPoint(sessionAuthenticationEntryPoint) // handle 401 Error
-                                .accessDeniedHandler(sessionAccessDeniedHandler)           // handle 403 Error
+                                .authenticationEntryPoint(customAuthenticationEntryPoint) // handle 401 Error
+                                .accessDeniedHandler(customAccessDeniedHandler)           // handle 403 Error
                 )
-                .addFilterBefore(new SessionAuthenticationFilter(sessionManager, sessionAuthenticationProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new CookieAuthenticationFilter(cookieManager, sessionAuthenticationProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new SessionAuthenticationFilter(sessionManager, sessionAuthenticationProvider), CookieAuthenticationFilter.class);
         return http.build();
     }
 

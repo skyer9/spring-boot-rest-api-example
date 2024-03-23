@@ -18,15 +18,18 @@ import java.util.Set;
 public class MyUser {
 
     @Id
-    @Column(name = "username", length = 128, unique = true)
+    @Column(length = 128, unique = true)
     private String username;
 
     @JsonIgnore
-    @Column(name = "password", length = 256)
+    @Column(length = 256)
     private String password;
 
-    @Column(name = "nickname", length = 128)
+    @Column(length = 128)
     private String nickname;
+
+    @Column(length = 19)
+    private String lastLoginDate;
 
     @JsonIgnore
     @Column(name = "activated")
