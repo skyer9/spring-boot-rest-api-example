@@ -34,6 +34,9 @@ public class MyUserService {
             throw new UserNotFoundException("username or password is incorrect");
         }
 
+        SimpleDateFormat now = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        myUser.setLastLoginDate(now.format(new Date()));
+
         loginLogService.loginSucceeded(username, SecurityUtil.getClientIpAddress(request));
         return myUser;
     }

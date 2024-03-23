@@ -21,9 +21,6 @@ public class SessionAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         Object o = sessionManager.getSession((HttpServletRequest) request);
-//        if (o == null) {
-//            o = sessionManager.getSessionByCookie((HttpServletRequest) request, (HttpServletResponse) response);
-//        }
         if (o instanceof MyUser myUser) {
             Authentication authentication = sessionAuthenticationProvider.getAuthentication(myUser);
             SecurityContextHolder.getContext().setAuthentication(authentication);
