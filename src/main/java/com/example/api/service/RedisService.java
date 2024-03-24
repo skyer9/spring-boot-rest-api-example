@@ -20,10 +20,9 @@ public class RedisService {
         try {
             String jsonString = mapper.writeValueAsString(value);
             redisTemplate.opsForValue().set(key, jsonString, expiredTime, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Invalid json format: ", e);
         }
-
     }
 
     public <T> Optional<T> getData(String key, Class<T> valueType) {
@@ -34,7 +33,7 @@ public class RedisService {
             }
             return Optional.empty();
         } catch (JsonProcessingException e) {
-            return Optional.empty();
+            throw new RuntimeException("Invalid json format: ", e);
         }
     }
 
